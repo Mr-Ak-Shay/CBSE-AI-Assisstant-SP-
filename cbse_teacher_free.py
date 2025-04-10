@@ -7,15 +7,11 @@ from gtts import gTTS
 from io import BytesIO
 import speech_recognition as sr
 
-# OpenRouter API key
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "#Enter youre API Key"
 
-# --- PAGE CONFIG ---
 st.set_page_config(page_title="📘 CBSE Teacher AI Assistant", layout="centered")
 st.sidebar.title("🎓 CBSE Teacher Assistant")
 st.sidebar.markdown("Built for Class 12 Computer Science students and teachers.\nFree, fast & fully open-source!")
-
-# --- FUNCTIONS ---
 
 def extract_text(file):
     if file.name.endswith(".pdf"):
@@ -46,7 +42,7 @@ def query_openrouter(prompt):
         response = requests.post(url, headers=headers, json=data)
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
-        return f"❌ Error reaching AI: {str(e)}"
+        return f" Error reaching AI: {str(e)}"
 
 def speak_text(text):
     try:
@@ -63,7 +59,7 @@ def recognize_speech_from_mic():
     recognizer = sr.Recognizer()
     mic = sr.Microphone()
     with mic as source:
-        st.info("🎤 Speak now...")
+        st.info(" Speak now...")
         recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source, timeout=5)
     try:
@@ -73,19 +69,16 @@ def recognize_speech_from_mic():
     except sr.RequestError:
         return "Speech recognition service is unavailable."
 
-# --- SESSION STATE ---
 if "question" not in st.session_state:
     st.session_state.question = ""
 
-# --- UI ---
 
 st.title("📘 CBSE Class 12 - Teacher AI Assistant")
 st.caption("Upload notes, ask CS questions, use voice, or even scan a question image 📸")
 
 uploaded_file = st.file_uploader("📄 Upload Notes (PDF or TXT)", type=["pdf", "txt"])
-image_file = st.file_uploader("🖼️ Upload Image of a CS Question", type=["jpg", "jpeg", "png"])
+image_file = st.file_uploader("🖼 Upload Image of a CS Question", type=["jpg", "jpeg", "png"])
 
-# Extract context
 context = ""
 if uploaded_file:
     context = extract_text(uploaded_file)
@@ -98,7 +91,6 @@ if image_file:
         st.write(image_text)
     context += "\n" + image_text
 
-# Search inside context
 if context:
     keyword = st.text_input("🔍 Search inside uploaded notes (optional)", placeholder="e.g. list, file handling")
     if keyword:
@@ -115,10 +107,8 @@ if st.button("🎙️ Record Voice Input"):
     st.success(f"🗣️ You said: {spoken}")
     st.session_state.question = spoken
 
-# ✅ New Checkbox to toggle speech
 speak_answer = st.checkbox("🔊 Speak the answer out loud?")
 
-# --- Get Answer ---
 if st.button("🚀 Get Answer"):
     question = st.session_state.question
     if not question.strip():
@@ -138,7 +128,6 @@ Question: {question}
         st.markdown("### 📘 Answer:")
         st.write(answer)
 
-        # 🔊 Only speak if checkbox is checked
         if speak_answer:
             audio_data = speak_text(answer)
             if audio_data:
@@ -147,6 +136,5 @@ Question: {question}
             else:
                 st.warning("⚠️ Could not generate audio.")
 
-# --- Footer ---
 st.markdown("---")
-st.caption("👨‍🏫 Made with ❤️ by Akshay | Fully free for CBSE schools.")
+st.caption(" Made with ❤️ by Akshay | Fully free for CBSE schools.")
